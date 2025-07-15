@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "a8JAZviyZiG1V2Vqx8+7teKFjfV1SiA304Q/4Z35wbs=",
+  "Source": "PokeAuction.API",
+  "BasePath": "_content/PokeAuction.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
