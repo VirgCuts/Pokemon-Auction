@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PokeAuction.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+498c15d940bf6e7df30718f4b3d3afb9e7cce349")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7d5b76abf67bd4ddc5f40efc76e175612997c89d")]
 [assembly: System.Reflection.AssemblyProductAttribute("PokeAuction.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PokeAuction.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

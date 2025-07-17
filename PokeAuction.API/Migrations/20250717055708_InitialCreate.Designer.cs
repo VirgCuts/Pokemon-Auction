@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokeAuctionAPI.Data;
 
@@ -9,10 +10,12 @@ using PokeAuctionAPI.Data;
 
 namespace PokeAuction.API.Migrations
 {
-    [DbContext(typeof(PokeContext))]
-    partial class PokeContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(PokemonContext))]
+    [Migration("20250717055708_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,56 +33,59 @@ namespace PokeAuction.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<short>("Abundance")
+                    b.Property<short?>("Abundance")
                         .HasColumnType("smallint")
                         .HasColumnName("abundance");
 
-                    b.Property<byte>("BaseAtk")
+                    b.Property<byte?>("BaseAtk")
                         .HasColumnType("tinyint")
                         .HasColumnName("base_atk");
 
-                    b.Property<byte>("BaseDef")
+                    b.Property<byte?>("BaseDef")
                         .HasColumnType("tinyint")
                         .HasColumnName("base_def");
 
-                    b.Property<byte>("BaseHp")
+                    b.Property<byte?>("BaseHp")
                         .HasColumnType("tinyint")
                         .HasColumnName("base_hp");
 
-                    b.Property<byte>("BaseSatk")
+                    b.Property<byte?>("BaseSatk")
                         .HasColumnType("tinyint")
                         .HasColumnName("base_satk");
 
-                    b.Property<byte>("BaseSdef")
+                    b.Property<byte?>("BaseSdef")
                         .HasColumnType("tinyint")
                         .HasColumnName("base_sdef");
 
-                    b.Property<byte>("BaseSpd")
+                    b.Property<byte?>("BaseSpd")
                         .HasColumnType("tinyint")
                         .HasColumnName("base_spd");
 
-                    b.Property<byte>("Catchable")
+                    b.Property<byte?>("Catchable")
                         .HasColumnType("tinyint")
                         .HasColumnName("catchable");
 
                     b.Property<string>("Credit")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)")
                         .HasColumnName("credit");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
                         .HasColumnName("description");
 
-                    b.Property<short>("DexNumber")
+                    b.Property<short?>("DexNumber")
                         .HasColumnType("smallint")
                         .HasColumnName("dex_number");
 
-                    b.Property<byte>("Enabled")
+                    b.Property<byte?>("Enabled")
                         .HasColumnType("tinyint")
                         .HasColumnName("enabled");
 
                     b.Property<string>("Event")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)")
                         .HasColumnName("event");
 
                     b.Property<long?>("EvoFrom")
@@ -99,27 +105,30 @@ namespace PokeAuction.API.Migrations
                         .HasColumnName("evo_mega_y");
 
                     b.Property<string>("EvoTo")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)")
                         .HasColumnName("evo_to");
 
                     b.Property<string>("FormItem")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("form_item");
 
-                    b.Property<short>("GenderRate")
+                    b.Property<short?>("GenderRate")
                         .HasColumnType("smallint")
                         .HasColumnName("gender_rate");
 
-                    b.Property<bool>("HasGenderDifferences")
+                    b.Property<bool?>("HasGenderDifferences")
                         .HasColumnType("bit")
                         .HasColumnName("has_gender_differences");
 
-                    b.Property<short>("Height")
+                    b.Property<short?>("Height")
                         .HasColumnType("smallint")
                         .HasColumnName("height");
 
                     b.Property<string>("IsForm")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)")
                         .HasColumnName("is_form");
 
                     b.Property<byte?>("Legendary")
@@ -131,54 +140,66 @@ namespace PokeAuction.API.Migrations
                         .HasColumnName("mythical");
 
                     b.Property<string>("NameDe")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("name_de");
 
                     b.Property<string>("NameEn")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("name_en");
 
                     b.Property<string>("NameEn2")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("name_en2");
 
                     b.Property<string>("NameFr")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("name_fr");
 
                     b.Property<string>("NameJa")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("name_ja");
 
                     b.Property<string>("NameJaR")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("name_ja_r");
 
                     b.Property<string>("NameJaT")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("name_ja_t");
 
                     b.Property<string>("Region")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("region");
 
                     b.Property<string>("Slug")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("slug");
 
                     b.Property<string>("Type0")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("type_0");
 
                     b.Property<string>("Type1")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("type_1");
 
                     b.Property<string>("UltraBeast")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)")
                         .HasColumnName("ultra_beast");
 
-                    b.Property<short>("Weight")
+                    b.Property<short?>("Weight")
                         .HasColumnType("smallint")
                         .HasColumnName("weight");
 
