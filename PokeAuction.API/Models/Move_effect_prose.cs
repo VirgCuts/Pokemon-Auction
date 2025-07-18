@@ -7,19 +7,18 @@ namespace PokeAuctionAPI.Models
     public class Move_effect_prose
     {
         [Key]
-        [Column(Order = 0)]
-        [Required]
+        [Column("move_effect_id", Order = 0)]
         public int MoveEffectId { get; set; }
 
         [Key]
-        [Column(Order = 1)]
-        [Required]
+        [Column("local_language_id", Order = 1)]
         public byte LocalLanguageId { get; set; }
 
-        [Required]
+        [Column("short_effect")]
         [StringLength(150)]
         public string ShortEffect { get; set; } = string.Empty;
 
+        [Column("effect")]
         public string? Effect { get; set; }
     }
 }

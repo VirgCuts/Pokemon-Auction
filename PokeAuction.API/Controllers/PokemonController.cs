@@ -10,26 +10,58 @@ namespace PokeAuctionAPI.Controllers;
 public class PokemonController : ControllerBase
 {
     private readonly PokemonContext _pokemonContext;
-    private readonly ItemContext _ItemContext;
-    private readonly MoveContext _MoveContext;
-    private readonly PokemonMoveContext _pokemonMoveContext;
-    private readonly EvolutionContext _evolutionContext;
 
-    public PokemonController(
-        PokemonContext pokemonContext,
-        ItemContext ItemContext,
-        MoveContext MoveContext,
-        PokemonMoveContext pokemonMoveContext,
-        EvolutionContext evolutionContext)
+    public PokemonController(PokemonContext pokemonContext)
     {
         _pokemonContext = pokemonContext;
-        _ItemContext = ItemContext;
-        _MoveContext = MoveContext;
-        _pokemonMoveContext = pokemonMoveContext;
-        _evolutionContext = evolutionContext;
     }
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Pokemon>>> GetAll()
+
+    /*
+    * -----------------------------Evolution-------------------------------
+    */
+    [HttpGet("all/evolution")]
+    public async Task<ActionResult<IEnumerable<Evolution>>> GetAllEvolution()
+    {
+        return await _pokemonContext.Evolution.ToListAsync();
+    }
+    /*
+    * -----------------------------Item------------------------------------
+    */
+    [HttpGet("all/item")]
+    public async Task<ActionResult<IEnumerable<Item>>> GetAllItems()
+    {
+        return await _pokemonContext.Item.ToListAsync();
+    }
+
+    /*
+    * -----------------------------Move Effect Prose-----------------------
+    */
+    [HttpGet("all/moveeffectprose")]
+    public async Task<ActionResult<IEnumerable<Move_effect_prose>>> GetAllMove_effect_prose()
+    {
+        return await _pokemonContext.Move_effect_prose.ToListAsync();
+    }
+    /*
+    * -----------------------------Move------------------------------------
+    */
+    [HttpGet("all/move")]
+    public async Task<ActionResult<IEnumerable<Move>>> GetAllMove()
+    {
+        return await _pokemonContext.Move.ToListAsync();
+    }
+    /*
+    * -----------------------------Pokemon Move----------------------------
+    */
+    [HttpGet("all/pokemonmove")]
+    public async Task<ActionResult<IEnumerable<Pokemon_move>>> GetAllPokemonMove()
+    {
+        return await _pokemonContext.Pokemon_move.ToListAsync();
+    }
+    /*
+    * -----------------------------Pokemon---------------------------------
+    */
+    [HttpGet("all/pokemon")]
+    public async Task<ActionResult<IEnumerable<Pokemon>>> GetAllPokemon()
     {
         return await _pokemonContext.Pokemon.ToListAsync();
     }
@@ -50,25 +82,10 @@ public class PokemonController : ControllerBase
         return pokemon;
     }
 
+
     /*
-    * --------------------------------------ITEM-----------------------------------
+    * -----------------------------Debug Calls------------------------------
     */
-
-    [HttpGet("items")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItems()
-        {
-            try
-            {
-                var items = await _ItemContext.Item.ToListAsync();
-                return Ok(items);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred while retrieving items", error = ex.Message });
-            }
-        }
-
-
     [HttpGet("debug")]
     public async Task<ActionResult<object>> Debug()
     {

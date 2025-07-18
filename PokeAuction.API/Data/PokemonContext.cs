@@ -8,73 +8,40 @@ namespace PokeAuctionAPI.Data
         public PokemonContext(DbContextOptions<PokemonContext> options) : base(options) { }
 
         public DbSet<Pokemon> Pokemon { get; set; } = null!;
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Pokemon>()
-                .ToTable("pokemon");
-        }
-    }
-    public class ItemContext : DbContext
-    {
-        public ItemContext(DbContextOptions<ItemContext> options) : base(options) { }
-        
         public DbSet<Item> Item { get; set; } = null!;
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Item>()
-                .ToTable("Items");
-        }
-    }
-    public class MoveContext : DbContext
-    {
-        public MoveContext(DbContextOptions<MoveContext> options) : base(options) { }
-        
         public DbSet<Move> Move { get; set; } = null!;
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Move>()
-                .ToTable("Moves");
-        }
-    }
-    public class PokemonMoveContext : DbContext
-    {
-        public PokemonMoveContext(DbContextOptions<PokemonMoveContext> options) : base(options) { }
-        
-        public DbSet<Pokemon_Move> PokemonMove { get; set; } = null!;
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Pokemon_Move>()
-                .ToTable("PokemonMoves")
-                .HasKey(pm => new { pm.PokemonId, pm.VersionGroupId, pm.MoveId, pm.PokemonMoveMethodId });
-        }
-    }
-    public class MoveEffectProseContext : DbContext
-    {
-        public MoveEffectProseContext(DbContextOptions<MoveEffectProseContext> options) : base(options) { }
-        
-        public DbSet<Move_effect_prose> MoveEffectText { get; set; } = null!;
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Move_effect_prose>()
-                .ToTable("MoveEffectText")
-                .HasKey(met => new { met.MoveEffectId, met.LocalLanguageId });
-        }
-    }
-    public class EvolutionContext : DbContext
-    {
-        public EvolutionContext(DbContextOptions<EvolutionContext> options) : base(options) { }
-        
+        public DbSet<Pokemon_move> Pokemon_move { get; set; } = null!;
+        public DbSet<Move_effect_prose> Move_effect_prose { get; set; } = null!;
         public DbSet<Evolution> Evolution { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Pokemon entity configuration
+            modelBuilder.Entity<Pokemon>()
+                .ToTable("pokemon");
+
+            // Item entity configuration
+            modelBuilder.Entity<Item>()
+                .ToTable("item");
+
+            // Move entity configuration
+            modelBuilder.Entity<Move>()
+                .ToTable("move");
+
+            // Pokemon_Move entity configuration
+            modelBuilder.Entity<Pokemon_move>()
+                .ToTable("pokemon_move")
+                .HasKey(pm => new { pm.PokemonId, pm.VersionGroupId, pm.MoveId, pm.PokemonMoveMethodId });
+
+            // Move_effect_prose entity configuration
+            modelBuilder.Entity<Move_effect_prose>()
+                .ToTable("move_effect_prose")
+                .HasKey(mep => new { mep.MoveEffectId, mep.LocalLanguageId });
+
+            // Order by Evolve Species Id and Evo Trigger as some Id's == NULL
             modelBuilder.Entity<Evolution>()
-                .ToTable("Evolution");
+                .ToTable("evolution")
+                .HasKey(e => new { e.EvolvedSpeciesId, e.EvolutionTriggerId });
         }
     }
 }

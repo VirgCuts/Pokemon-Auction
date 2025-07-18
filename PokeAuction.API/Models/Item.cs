@@ -7,31 +7,35 @@ namespace PokeAuctionAPI.Models
     public class Item
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("id")]
         public int Id { get; set; }
 
-        [Required]
+        [Column("name")]
         [StringLength(50)]
         public string Name { get; set; } = string.Empty;
 
+        [Column("description")]
         [StringLength(150)]
         public string? Description { get; set; }
 
-        [Required]
+        [Column("cost")]
         public short Cost { get; set; }
 
+        [Column("shard")]
         public byte? Shard { get; set; }
 
-        [Required]
+        [Column("action")]
         [StringLength(50)]
         public string Action { get; set; } = string.Empty;
 
-        [Required]
+        [Column("page")]
         public byte Page { get; set; }
 
+        [Column("emote")]
         [StringLength(50)]
         public string? Emote { get; set; }
 
+        [Column("separate")]
         public byte? Separate { get; set; }
     }
 }
