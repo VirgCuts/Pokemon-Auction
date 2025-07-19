@@ -19,15 +19,38 @@ public class PokemonController : ControllerBase
     /*
     * -----------------------------Evolution-------------------------------
     */
-    [HttpGet("all/evolution")]
+    [HttpGet("evolution/all")]
     public async Task<ActionResult<IEnumerable<Evolution>>> GetAllEvolution()
     {
         return await _pokemonContext.Evolution.ToListAsync();
     }
+     [HttpGet("evolution/{pokemonid}")]
+    public async Task<ActionResult<object>> GetPokemonEvolution(int pokemonid)
+    {
+        var pokemon = await _pokemonContext.Pokemon.FirstOrDefaultAsync(p => p.Id == pokemonid);
+        if (pokemon == null) return NotFound($"No Pokémon found with ID #{pokemonid}");
+
+        // Check if this pokemon has an evolution (evo_to value)
+        if (pokemon.EvoTo == null)
+            return Ok(new { message = $"Pokémon does not evolve", pokemon = pokemon });
+
+        // Look for the evolution row where evolved_species_id matches the evo_to value
+        var evolution = await _pokemonContext.Evolution
+            .FirstOrDefaultAsync(e => e.EvolvedSpeciesId == int.Parse(pokemon.EvoTo)); //should have stored EvoTo as int
+
+        if (evolution == null)
+            return NotFound($"Evolution data not found for evolution ID {pokemon.EvoTo}");
+
+        return Ok(new 
+        { 
+            originalPokemon = pokemon,
+            evolutionData = evolution
+        });
+    }
     /*
     * -----------------------------Item------------------------------------
     */
-    [HttpGet("all/item")]
+    [HttpGet("item/all")]
     public async Task<ActionResult<IEnumerable<Item>>> GetAllItems()
     {
         return await _pokemonContext.Item.ToListAsync();
@@ -36,7 +59,7 @@ public class PokemonController : ControllerBase
     /*
     * -----------------------------Move Effect Prose-----------------------
     */
-    [HttpGet("all/moveeffectprose")]
+    [HttpGet("moveeffectprose/all")]
     public async Task<ActionResult<IEnumerable<Move_effect_prose>>> GetAllMove_effect_prose()
     {
         return await _pokemonContext.Move_effect_prose.ToListAsync();
@@ -44,7 +67,7 @@ public class PokemonController : ControllerBase
     /*
     * -----------------------------Move------------------------------------
     */
-    [HttpGet("all/move")]
+    [HttpGet("move/all")]
     public async Task<ActionResult<IEnumerable<Move>>> GetAllMove()
     {
         return await _pokemonContext.Move.ToListAsync();
@@ -52,7 +75,7 @@ public class PokemonController : ControllerBase
     /*
     * -----------------------------Pokemon Move----------------------------
     */
-    [HttpGet("all/pokemonmove")]
+    [HttpGet("pokemonmove/all")]
     public async Task<ActionResult<IEnumerable<Pokemon_move>>> GetAllPokemonMove()
     {
         return await _pokemonContext.Pokemon_move.ToListAsync();
@@ -60,7 +83,7 @@ public class PokemonController : ControllerBase
     /*
     * -----------------------------Pokemon---------------------------------
     */
-    [HttpGet("all/pokemon")]
+    [HttpGet("pokemon/all")]
     public async Task<ActionResult<IEnumerable<Pokemon>>> GetAllPokemon()
     {
         return await _pokemonContext.Pokemon.ToListAsync();
@@ -82,7 +105,14 @@ public class PokemonController : ControllerBase
         return pokemon;
     }
 
-
+    [HttpGet("info/{id}")]
+    public async Task<ActionResult<Pokemon>> AllPokemonInfo(int pokemonid)
+    {
+        var pokemon = await _pokemonContext.Pokemon.FirstOrDefaultAsync(p => p.Id == pokemonid);
+        if (pokemon == null) return NotFound($"No Pokémon found with Dex #{pokemonid}");
+        
+        return pokemon;
+    }
     /*
     * -----------------------------Debug Calls------------------------------
     */
