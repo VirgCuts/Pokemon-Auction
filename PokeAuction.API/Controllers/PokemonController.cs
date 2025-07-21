@@ -24,7 +24,7 @@ public class PokemonController : ControllerBase
     {
         return await _pokemonContext.Evolution.ToListAsync();
     }
-     [HttpGet("evolution/{pokemonid}")]
+    [HttpGet("evolution/{pokemonid}")]
     public async Task<ActionResult<object>> GetPokemonEvolution(int pokemonid)
     {
         var pokemon = await _pokemonContext.Pokemon.FirstOrDefaultAsync(p => p.Id == pokemonid);
@@ -72,10 +72,48 @@ public class PokemonController : ControllerBase
     {
         return await _pokemonContext.Move.ToListAsync();
     }
+
+    [HttpGet("moves-detailed/{pokemonid}")]
+    public async Task<ActionResult<object>> GetPokemonMovesDetailed(int pokemonid)
+    {
+        var pokemon = await _pokemonContext.Pokemon.FirstOrDefaultAsync(p => p.Id == pokemonid);
+        if (pokemon == null) return NotFound($"No Pokémon found with ID #{pokemonid}");
+
+        // Join pokemon_move with move table to get move details
+        var pokemonMovesWithDetails = await _pokemonContext.Pokemon_move
+            .Where(pm => pm.PokemonId == pokemonid)
+            .Join(_pokemonContext.Move,
+                pm => pm.MoveId,
+                m => m.Id,
+                (pm, m) => new
+                {
+                    VersionGroupId = pm.VersionGroupId,
+                    MoveId = m.Id,
+                    MoveName = m.Identifier,
+                    MovePower = m.Power,
+                    MovePP = m.PP,
+                    MoveAccuracy = m.Accuracy,
+                    MovePriority = m.Priority,
+                    LearnLevel = pm.Level,
+                    LearnMethod = pm.PokemonMoveMethodId,
+                    Order = pm.Order
+                })
+            .ToListAsync();
+
+        if (!pokemonMovesWithDetails.Any())
+            return Ok(new { message = $"No moves found for this Pokémon", pokemon = pokemon, moves = new List<object>() });
+
+        return Ok(new
+        {
+            pokemon = pokemon,
+            moves = pokemonMovesWithDetails,
+            moveCount = pokemonMovesWithDetails.Count
+        });
+    }
     /*
-    * -----------------------------Pokemon Move----------------------------
-    */
-    [HttpGet("pokemonmove/all")]
+        * -----------------------------Pokemon Move----------------------------
+        */
+        [HttpGet("pokemonmove/all")]
     public async Task<ActionResult<IEnumerable<Pokemon_move>>> GetAllPokemonMove()
     {
         return await _pokemonContext.Pokemon_move.ToListAsync();
@@ -105,14 +143,37 @@ public class PokemonController : ControllerBase
         return pokemon;
     }
 
-    [HttpGet("info/{id}")]
+    [HttpGet("info/{pokemonid}")]
     public async Task<ActionResult<Pokemon>> AllPokemonInfo(int pokemonid)
     {
         var pokemon = await _pokemonContext.Pokemon.FirstOrDefaultAsync(p => p.Id == pokemonid);
-        if (pokemon == null) return NotFound($"No Pokémon found with Dex #{pokemonid}");
-        
-        return pokemon;
+        if (pokemon == null) return NotFound($"No Pokémon found with ID #{pokemonid}");
+
+        // Check if this pokemon has an evolution (evo_to value)
+        if (pokemon.EvoTo == null)
+            return Ok(new { message = $"Pokémon does not evolve", pokemon = pokemon });
+
+        // Look for the evolution row where evolved_species_id matches the evo_to value
+        var evolution = await _pokemonContext.Evolution
+            .FirstOrDefaultAsync(e => e.EvolvedSpeciesId == int.Parse(pokemon.EvoTo)); //should have stored EvoTo as int
+
+        if (evolution == null)
+            return NotFound($"Evolution data not found for evolution ID {pokemon.EvoTo}");
+
+         var pokemonMoves = await _pokemonContext.Pokemon_move
+            .Where(pm => pm.PokemonId == pokemonid)
+            .ToListAsync();
+
+        if (!pokemonMoves.Any())
+            return Ok(new { message = $"No moves found for this Pokémon", pokemon = pokemon, moves = new List<Pokemon_move>() });
+        return Ok(new
+        {
+            originalPokemon = pokemon,
+            evolutionData = evolution,
+            pokemonmoves = pokemonMoves
+        });
     }
+    
     /*
     * -----------------------------Debug Calls------------------------------
     */
