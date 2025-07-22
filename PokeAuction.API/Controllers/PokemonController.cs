@@ -79,9 +79,8 @@ public class PokemonController : ControllerBase
         var pokemon = await _pokemonContext.Pokemon.FirstOrDefaultAsync(p => p.Id == pokemonid);
         if (pokemon == null) return NotFound($"No Pokémon found with ID #{pokemonid}");
 
-        // Join pokemon_move with move table to get move details
         var pokemonMovesWithDetails = await _pokemonContext.Pokemon_move
-            .Where(pm => pm.PokemonId == pokemonid)
+            .Where(pm => pm.PokemonId == pokemonid && pm.VersionGroupId == 25)
             .Join(_pokemonContext.Move,
                 pm => pm.MoveId,
                 m => m.Id,
@@ -101,13 +100,60 @@ public class PokemonController : ControllerBase
             .ToListAsync();
 
         if (!pokemonMovesWithDetails.Any())
-            return Ok(new { message = $"No moves found for this Pokémon", pokemon = pokemon, moves = new List<object>() });
+            return Ok(new { 
+                message = $"No moves found for this Pokémon in version group 25", 
+                pokemon = pokemon, 
+                moves = new List<object>() 
+            });
 
         return Ok(new
         {
             pokemon = pokemon,
             moves = pokemonMovesWithDetails,
-            moveCount = pokemonMovesWithDetails.Count
+            moveCount = pokemonMovesWithDetails.Count,
+            versionGroup = 25
+        });
+    }
+
+    [HttpGet("moves-detailed/{pokemonid}/version/{versionGroupId}")]
+    public async Task<ActionResult<object>> GetPokemonMovesDetailedByVersion(int pokemonid, int versionGroupId)
+    {
+        var pokemon = await _pokemonContext.Pokemon.FirstOrDefaultAsync(p => p.Id == pokemonid);
+        if (pokemon == null) return NotFound($"No Pokémon found with ID #{pokemonid}");
+
+        var pokemonMovesWithDetails = await _pokemonContext.Pokemon_move
+            .Where(pm => pm.PokemonId == pokemonid && pm.VersionGroupId == versionGroupId)
+            .Join(_pokemonContext.Move,
+                pm => pm.MoveId,
+                m => m.Id,
+                (pm, m) => new
+                {
+                    VersionGroupId = pm.VersionGroupId,
+                    MoveId = m.Id,
+                    MoveName = m.Identifier,
+                    MovePower = m.Power,
+                    MovePP = m.PP,
+                    MoveAccuracy = m.Accuracy,
+                    MovePriority = m.Priority,
+                    LearnLevel = pm.Level,
+                    LearnMethod = pm.PokemonMoveMethodId,
+                    Order = pm.Order
+                })
+            .ToListAsync();
+
+        if (!pokemonMovesWithDetails.Any())
+            return Ok(new { 
+                message = $"No moves found for this Pokémon in version group {versionGroupId}", 
+                pokemon = pokemon, 
+                moves = new List<object>() 
+            });
+
+        return Ok(new
+        {
+            pokemon = pokemon,
+            moves = pokemonMovesWithDetails,
+            moveCount = pokemonMovesWithDetails.Count,
+            versionGroup = versionGroupId
         });
     }
     /*
